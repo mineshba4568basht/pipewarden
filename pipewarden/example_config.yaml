@@ -1,0 +1,34 @@
+# pipewarden configuration example
+pipeline_name: "my_data_pipeline"
+
+# How often to poll metrics (in seconds)
+check_interval_seconds: 30
+
+# Logging level: DEBUG, INFO, WARNING, ERROR
+log_level: INFO
+
+# Define alerting rules for your pipeline metrics
+alert_rules:
+  - name: high_error_rate
+    metric: error_rate_percent
+    operator: gt
+    threshold: 5.0
+    severity: critical
+
+  - name: low_throughput
+    metric: records_per_second
+    operator: lt
+    threshold: 100
+    severity: warning
+
+  - name: high_latency
+    metric: processing_latency_ms
+    operator: gte
+    threshold: 2000
+    severity: warning
+
+  - name: queue_depth_check
+    metric: queue_depth
+    operator: gt
+    threshold: 10000
+    severity: info
