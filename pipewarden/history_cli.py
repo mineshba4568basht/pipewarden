@@ -46,8 +46,13 @@ def handle_history(args: argparse.Namespace) -> int:
 
 
 def _cmd_list(args: argparse.Namespace) -> int:
-    store = HistoryStore(path=args.history_file)
-    entries = store.load(limit=args.limit)
+    """Print the most recent run history entries to stdout."""
+    try:
+        store = HistoryStore(path=args.history_file)
+        entries = store.load(limit=args.limit)
+    except OSError as exc:
+        print(f"Error reading history file: {exc}", file=sys.stderr)
+        return 1
     if not entries:
         print("No run history found.")
         return 0
@@ -57,7 +62,12 @@ def _cmd_list(args: argparse.Namespace) -> int:
 
 
 def _cmd_clear(args: argparse.Namespace) -> int:
-    store = HistoryStore(path=args.history_file)
-    store.clear()
+    """Delete all entries from the history store."""
+    try:
+        store = HistoryStore(path=args.history_file)
+        store.clear()
+    except OSError as exc:
+        print(f"Error clearing history file: {exc}", file=sys.stderr)
+        return 1
     print("Run history cleared.")
     return 0
