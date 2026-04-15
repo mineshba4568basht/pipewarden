@@ -16,6 +16,17 @@ from pipewarden.history import HistoryStore, make_entry
 
 
 def _fake_report(passed: bool, total: int, failed: int, alerts: int) -> MagicMock:
+    """Create a mock report object for demonstration purposes.
+
+    Args:
+        passed: Whether the overall run passed.
+        total: Total number of check results.
+        failed: Number of failed checks.
+        alerts: Number of alert events triggered.
+
+    Returns:
+        A MagicMock mimicking a RunReport instance.
+    """
     report = MagicMock()
     report.passed = passed
     report.results = [MagicMock()] * total
@@ -42,7 +53,8 @@ def main() -> None:
             report=report,
         )
         store.append(entry)
-        print(f"  Stored: {entry}")
+        status = "PASS" if report.passed else "FAIL"
+        print(f"  [{status}] Stored: {entry}")
 
     print("\nLoading history (newest first):")
     for entry in store.load():
