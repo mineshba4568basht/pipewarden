@@ -55,6 +55,12 @@ class SilenceManager:
     def add(self, rule: SilenceRule) -> None:
         self.rules.append(rule)
 
+    def remove_expired(self, now: Optional[datetime] = None) -> int:
+        """Remove all expired rules and return the count of rules removed."""
+        before = len(self.rules)
+        self.rules = [r for r in self.rules if r.is_active(now)]
+        return before - len(self.rules)
+
     def is_silenced(
         self, event: AlertEvent, now: Optional[datetime] = None
     ) -> bool:
