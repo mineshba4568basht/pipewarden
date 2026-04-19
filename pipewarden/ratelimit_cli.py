@@ -22,17 +22,37 @@ def build_ratelimit_parser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_ratelimit(args: argparse.Namespace) -> None:
+    """Dispatch ratelimit sub-commands to the appropriate handler."""
     if args.ratelimit_cmd == "info":
-        policy = RateLimitPolicy(
-            max_alerts=args.max_alerts,
-            window_seconds=args.window,
-        )
-        print(policy)
+        _handle_info(args)
     elif args.ratelimit_cmd == "reset":
-        limiter = RateLimiter()
-        limiter.reset(args.pipeline)
-        print(f"Rate-limit counters cleared for pipeline: {args.pipeline}")
+        _handle_reset(args)
     elif args.ratelimit_cmd == "reset-all":
-        limiter = RateLimiter()
-        limiter.reset_all()
-        print("All rate-limit counters cleared.")
+        _handle_reset_all()
+
+
+def _handle_info(args: argparse.Namespace) -> None:
+    """Display the effective rate-limit policy."""
+    if args.max_alerts <= 0:
+        raise ValueError("--max-alerts must be a positive integer")
+    if args.window <= 0:
+        raise ValueError("--window must be a positive integer")
+    policy = RateLimitPolicy(
+        max_alerts=args.max_alerts,
+        window_seconds=args.window,
+    )
+    print(policy)
+
+
+def _handle_reset(args: argparse.Namespace) -> None:
+    """Reset rate-limit counters for a single pipeline."""
+    limiter = RateLimiter()
+    limiter.reset(args.pipeline)
+    print(f"Rate-limit counters cleared for pipeline: {args.pipeline}")
+
+
+def _handle_reset_all() -> None:
+    """Reset rate-limit counters for all pipelines."""
+    limiter = RateLimiter()
+    limiter.reset_all()
+    print("All rate-limit counters cleared.")
