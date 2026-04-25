@@ -8,6 +8,8 @@ check_interval_seconds: 30
 log_level: INFO
 
 # Define alerting rules for your pipeline metrics
+# Supported operators: gt (>), lt (<), gte (>=), lte (<=), eq (==)
+# Supported severities: critical, warning, info
 alert_rules:
   - name: high_error_rate
     metric: error_rate_percent
@@ -32,3 +34,10 @@ alert_rules:
     operator: gt
     threshold: 10000
     severity: info
+
+  # Alert if the pipeline has been idle (no records processed) for too long
+  - name: pipeline_idle
+    metric: records_per_second
+    operator: lte
+    threshold: 0
+    severity: critical
