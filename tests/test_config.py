@@ -78,3 +78,10 @@ def test_empty_config_file(tmp_path):
     config_file.write_text("")
     with pytest.raises(ValueError, match="empty or invalid"):
         load_config(str(config_file))
+
+
+@pytest.mark.parametrize("operator", ["gt", "lt", "gte", "lte", "eq"])
+def test_valid_operators(operator):
+    """Ensure all documented valid operators are accepted without error."""
+    rule = AlertRule(name="test", metric="latency", operator=operator, threshold=1.0)
+    assert rule.operator == operator
